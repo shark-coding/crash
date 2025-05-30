@@ -29,7 +29,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage());
 
             ObjectMapper objectMapper = new ObjectMapper();
-            String responseJson = objectMapper.writeValueAsString(objectMapper);
+            String responseJson = objectMapper.writeValueAsString(errorResponse);
             response.getWriter().write(responseJson);
         }
     }
