@@ -9,7 +9,7 @@ public class UserNotFoundException extends ClientErrorException {
         super(HttpStatus.NOT_FOUND, "User not found");
     }
 
-    public UserNotFoundException(String message) {
-        super(HttpStatus.NOT_FOUND, "User with username " + message + " not found");
+    public UserNotFoundException(String username) {
+        super(HttpStatus.NOT_FOUND, "User with username " + username + " not found");
     }
 }
