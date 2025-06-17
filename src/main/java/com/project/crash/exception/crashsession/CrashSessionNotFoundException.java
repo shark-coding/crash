@@ -10,6 +10,6 @@ public class CrashSessionNotFoundException extends ClientErrorException {
     }
 
     public CrashSessionNotFoundException(Long sessionId) {
-        super(HttpStatus.NOT_FOUND, "CrashSession with username " + sessionId + " not found");
+        super(HttpStatus.NOT_FOUND, "CrashSession with sessionId " + sessionId + " not found");
     }
 }

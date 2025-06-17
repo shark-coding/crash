@@ -3,14 +3,18 @@ package com.project.crash.controller;
 import com.project.crash.model.crashsession.CrashSession;
 import com.project.crash.model.crashsession.CrashSessionPatchRequestBody;
 import com.project.crash.model.crashsession.CrashSessionPostRequestBody;
+import com.project.crash.model.crashsession.CrashSessionRegistrationStatus;
+import com.project.crash.model.entity.UserEntity;
 import com.project.crash.model.sessionspeaker.SessionSpeaker;
 import com.project.crash.model.sessionspeaker.SessionSpeakerPatchRequestBody;
 import com.project.crash.model.sessionspeaker.SessionSpeakerPostRequestBody;
 import com.project.crash.service.CrashSessionService;
+import com.project.crash.service.RegistrationService;
 import com.project.crash.service.SessionSpeakerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +26,8 @@ public class CrashSessionController {
     @Autowired
     private CrashSessionService crashSessionService;
 
+    @Autowired private RegistrationService registrationService;
+
     @GetMapping
     public ResponseEntity<List<CrashSession>> getCrashSessions() {
         List<CrashSession> crashSessions = crashSessionService.getCrashSessions();
@@ -32,6 +38,12 @@ public class CrashSessionController {
     public ResponseEntity<CrashSession> getCrashSessionBySessionId(@PathVariable Long sessionId) {
         CrashSession crashSession = crashSessionService.getCrashSessionBySessionId(sessionId);
         return ResponseEntity.ok(crashSession);
+    }
+
+    @GetMapping("/{sessionId}/registration-status")
+    public ResponseEntity<CrashSessionRegistrationStatus> getCrashSessionRegistrationStatusBySessionId(@PathVariable Long sessionId, Authentication authentication) {
+        CrashSessionRegistrationStatus registrationStatus = registrationService.getCrashSessionRegistrationStatusBySessionIdAndCurrentUser(sessionId, (UserEntity) authentication.getPrincipal());
+        return ResponseEntity.ok(registrationStatus);
     }
 
     @PostMapping
