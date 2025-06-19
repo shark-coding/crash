@@ -2,3 +2,5 @@ spring:
   security:
     user.name: crash-admin
     user.password: crash-admin-password
+  config:
+    import: optional:application-secret.yml
