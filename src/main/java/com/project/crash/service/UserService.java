@@ -7,6 +7,7 @@ import com.project.crash.model.user.User;
 import com.project.crash.model.user.UserAuthenticationResponse;
 import com.project.crash.model.user.UserLoginRequestBody;
 import com.project.crash.model.user.UserSignUpRequestBody;
+import com.project.crash.repository.UserEntityCacheRepository;
 import com.project.crash.repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserEntityRepository userEntityRepository;
+
+    @Autowired
+    private UserEntityCacheRepository userEntityCacheRepository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -64,7 +68,14 @@ public class UserService implements UserDetailsService {
     }
 
     public UserEntity getUserEntityByUsername(String username) {
-        return userEntityRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+        return userEntityCacheRepository.getUserEntityCache(username)
+                .orElseGet(() -> {
+                    UserEntity userEntity =
+                            userEntityRepository
+                                    .findByUsername(username)
+                                    .orElseThrow(() -> new UserNotFoundException(username));
+                    userEntityCacheRepository.setUserEntityCache(userEntity);
+                    return userEntity;
+                });
     }
 }

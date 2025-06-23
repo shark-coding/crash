@@ -7,25 +7,41 @@ import com.project.crash.model.crashsession.CrashSessionPostRequestBody;
 import com.project.crash.model.entity.CrashSessionEntity;
 import com.project.crash.model.entity.SessionSpeakerEntity;
 import com.project.crash.model.sessionspeaker.SessionSpeaker;
+import com.project.crash.repository.CrashSessionCacheRepository;
 import com.project.crash.repository.CrashSessionEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CrashSessionService {
     @Autowired private CrashSessionEntityRepository crashSessionEntityRepository;
     @Autowired private SessionSpeakerService sessionSpeakerService;
+    @Autowired private CrashSessionCacheRepository crashSessionCacheRepository;
 
     public List<CrashSession> getCrashSessions() {
-        return crashSessionEntityRepository.findAll().stream().map(CrashSession::from).toList();
+        List<CrashSession> crashSessions = crashSessionCacheRepository.getCrashSessionListCache();
+        if (!ObjectUtils.isEmpty(crashSessions)) {
+            return crashSessions;
+        } else {
+            List<CrashSession> crashSessionList = crashSessionEntityRepository.findAll().stream().map(CrashSession::from).toList();
+            crashSessionCacheRepository.setCrashSessionListCache(crashSessionList);
+            return crashSessionList;
+        }
     }
 
     public CrashSession getCrashSessionBySessionId(Long sessionId) {
-        CrashSessionEntity crashSessionEntity = getCrashSessionEntityBySessionId(sessionId);
-        return CrashSession.from(crashSessionEntity);
+        return crashSessionCacheRepository
+                .getCrashSessionCache(sessionId)
+                .orElseGet(() -> {
+                    CrashSessionEntity crashSessionEntity = getCrashSessionEntityBySessionId(sessionId);
+                    CrashSession crashSession = CrashSession.from(crashSessionEntity);
+                    crashSessionCacheRepository.setCrashSessionCache(crashSession);
+                    return crashSession;
+                });
     }
 
     public CrashSession createCrashSession(CrashSessionPostRequestBody crashSessionPostRequestBody) {
