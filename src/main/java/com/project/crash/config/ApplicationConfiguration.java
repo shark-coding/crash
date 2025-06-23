@@ -9,6 +9,7 @@ import com.project.crash.model.sessionspeaker.SessionSpeakerPostRequestBody;
 import com.project.crash.model.user.UserSignUpRequestBody;
 import com.project.crash.service.CrashSessionService;
 import com.project.crash.service.SessionSpeakerService;
+import com.project.crash.service.SlackService;
 import com.project.crash.service.UserService;
 import net.datafaker.Faker;
 import org.slf4j.Logger;
@@ -57,16 +58,16 @@ public class ApplicationConfiguration {
             @Override
             public void run(ApplicationArguments args) throws Exception {
                 // user 및 sessionSpeaker 생성
-//                createTestUsers();
-//                createTestSessionSpeakers(10);
-                // Bitcoin USD 가격 조회
-                Double bitcoinUsdPrice = getBitcoinUsdPrice();
-                // USD to KRW 환율 조회
-                Double usdTokrwExchangeRate = getUsdTokrwExchangeRate();
-                // Bitcoin KRW 가격 계산
-                double koreanPremium = 1.1;
-                double bitcoinKrwPrice = bitcoinUsdPrice * usdTokrwExchangeRate * koreanPremium;
-                logger.info(String.format("BTC KRW: %.2f", bitcoinKrwPrice));
+                createTestUsers();
+                createTestSessionSpeakers(10);
+//                // Bitcoin USD 가격 조회
+//                Double bitcoinUsdPrice = getBitcoinUsdPrice();
+//                // USD to KRW 환율 조회
+//                Double usdTokrwExchangeRate = getUsdTokrwExchangeRate();
+//                // Bitcoin KRW 가격 계산
+//                double koreanPremium = 1.1;
+//                double bitcoinKrwPrice = bitcoinUsdPrice * usdTokrwExchangeRate * koreanPremium;
+//                logger.info(String.format("BTC KRW: %.2f", bitcoinKrwPrice));
             }
 
         };

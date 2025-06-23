@@ -20,6 +20,7 @@ import java.util.Optional;
 public class RegistrationService {
     @Autowired private RegistrationEntityRepository registrationEntityRepository;
     @Autowired private CrashSessionService crashSessionService;
+    @Autowired private SlackService slackService;
 
 
     public List<Registration> getRegistrationsByCurrentUser(UserEntity currentUser) {
@@ -50,7 +51,9 @@ public class RegistrationService {
                         });
 
         RegistrationEntity registrationEntity = RegistrationEntity.of(currentUser, crashSessionEntity);
-        return Registration.from(registrationEntityRepository.save(registrationEntity));
+        Registration registraion = Registration.from(registrationEntityRepository.save(registrationEntity));
+        slackService.sendSlackNotification(registraion);
+        return registraion;
     }
 
     public void deleteRegistrationByRegistrationIdAndCurrentUser(Long registrationId, UserEntity currentUser) {
