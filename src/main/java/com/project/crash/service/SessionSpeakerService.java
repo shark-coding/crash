@@ -1,10 +1,12 @@
 package com.project.crash.service;
 
 import com.project.crash.exception.sessionspeaker.SessionSpeakerNotFoundException;
+import com.project.crash.model.entity.CrashSessionEntity;
 import com.project.crash.model.entity.SessionSpeakerEntity;
 import com.project.crash.model.sessionspeaker.SessionSpeaker;
 import com.project.crash.model.sessionspeaker.SessionSpeakerPatchRequestBody;
 import com.project.crash.model.sessionspeaker.SessionSpeakerPostRequestBody;
+import com.project.crash.repository.CrashSessionEntityRepository;
 import com.project.crash.repository.SessionSpeakerEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.List;
 @Service
 public class SessionSpeakerService {
     @Autowired private SessionSpeakerEntityRepository sessionSpeakerEntityRepository;
+    @Autowired private CrashSessionEntityRepository crashSessionEntityRepository;
 
 
     public List<SessionSpeaker> getSessionSpeakers() {
@@ -65,6 +68,11 @@ public class SessionSpeakerService {
 
     public void deleteSessionSpeaker(Long speakerId) {
         SessionSpeakerEntity sessionSpeakerEntity = getSessionSpeakerEntityBySpeakerId(speakerId);
-        sessionSpeakerEntityRepository.delete(sessionSpeakerEntity);
+        if (!ObjectUtils.isEmpty(sessionSpeakerEntity)) {
+            List<CrashSessionEntity> crashSessions = crashSessionEntityRepository.findBySpeaker_SpeakerId(speakerId);
+            crashSessionEntityRepository.deleteAll(crashSessions);
+            sessionSpeakerEntityRepository.delete(sessionSpeakerEntity);
+        }
+
     }
 }
