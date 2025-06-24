@@ -70,6 +70,13 @@ project-root
 - Postman으로 테스트한 API를 문서화
 - 공개 문서로 변환 → 다른 사용자도 쉽게 사용 가능하도록 공유
 
+### 6. 외래키 제약조건 위반 오류 해결
+- `CrashSessionEntity`와 `SessionSpeakerEntity` 사이에 `@ManyToOne` 연관관계를 설정했는데, 특정 `speakerId`를 삭제하려 할 때 다음과 같은 오류가 발생했습니다:
+- 2025-06-24T16:22:05.001+09:00 ERROR 6552 --- [nio-8080-exec-7] o.h.engine.jdbc.spi.SqlExceptionHelper   : ERROR: update or delete on table "sessionspeaker" violates foreign key constraint "fk8js8b9ckfy9gou8knax38te9h" on table "crashsession"
+  Detail: Key (speakerid)=(1) is still referenced from table "crashsession".
+  
+🔗 [트러블슈팅 블로그](https://blog.naver.com/shark_coding/223910286847)
+
 ## 📌 API 문서
 
 API 명세는 Postman으로 작성하고 문서화하였습니다.  
